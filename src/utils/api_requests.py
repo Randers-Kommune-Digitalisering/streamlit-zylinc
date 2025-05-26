@@ -43,7 +43,7 @@ class APIClient:
                                 if time.time() < self.refresh_token_expiry:
                                     refresh_token = True
 
-            tmp_url = f'{self.base_url}/auth/realms/{self.realm}/protocol/openid-connect/token'
+            tmp_url = f'{self.base_url}/{self.realm}/auth/connect/token'
 
             tmp_headers = {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -95,9 +95,15 @@ class APIClient:
             if 'path' in kwargs:
                 if not isinstance(kwargs['path'], str):
                     raise ValueError('Path must be a string')
-                url = self.base_url.rstrip('/') + '/' + kwargs.pop('path').lstrip('/')
+                if self.realm:
+                    url = self.base_url.rstrip('/') + f'/{self.realm}/' + kwargs.pop('path').lstrip('/')
+                else:
+                    url = self.base_url.rstrip('/') + '/' + kwargs.pop('path').lstrip('/')
             else:
-                url = self.base_url
+                if self.realm:
+                    url = self.base_url.rstrip('/') + f'/{self.realm}'
+                else:
+                    url = self.base_url
 
             if 'headers' in kwargs:
                 if not isinstance(kwargs['headers'], dict):
@@ -121,8 +127,6 @@ class APIClient:
 
             response = method(url, **kwargs)
             response.raise_for_status()
-
-            self.logger.info(f'{method_string} request to {url} successful')
 
             if 'application/json' in response.headers.get('Content-Type', ''):
                 return response.json()
