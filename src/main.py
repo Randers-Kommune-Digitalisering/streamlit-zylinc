@@ -11,7 +11,7 @@ from page.live import display_live_data
 from utils.config import ZYLINC_NAME
 
 
-st.set_page_config(page_title=ZYLINC_NAME.capitalize(), page_icon="assets/favicon.ico", layout="wide")
+st.set_page_config(page_title=ZYLINC_NAME, page_icon="assets/favicon.ico", layout="wide")
 
 with st.sidebar:
     st.sidebar.markdown(get_logo(), unsafe_allow_html=True)
